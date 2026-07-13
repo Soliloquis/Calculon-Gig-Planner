@@ -1,0 +1,360 @@
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+
+export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMonth, summary }) {
+  const [hoveredPoint, setHoveredPoint] = useState(null);
+  const containerRef = useRef(null);
+
+  // SVG Chart Dimensions
+  const chartHeight = 260;
+  const paddingX = 40;
+  const paddingY = 30;
+  
+  // Compute horizontal spacing based on timeline length
+  const pointSpacing = 42; // pixels per month
+  const chartWidth = useMemo(() => {
+    return Math.max(800, timeline.length * pointSpacing + paddingX * 2);
+  }, [timeline.length]);
+
+  // Scroll the chart to active month
+  useEffect(() => {
+    if (selectedMonthKey && containerRef.current) {
+      const activeIdx = timeline.findIndex(m => m.month === selectedMonthKey);
+      if (activeIdx !== -1) {
+        const container = containerRef.current;
+        const targetX = activeIdx * pointSpacing + paddingX;
+        const containerWidth = container.clientWidth;
+        
+        container.scrollTo({
+          left: targetX - containerWidth / 2,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [selectedMonthKey, timeline]);
+
+  // Calculate Y domain bounds (min & max balance)
+  const yBounds = useMemo(() => {
+    if (timeline.length === 0) return { min: 0, max: 10000 };
+    
+    let max = -Infinity;
+    let min = 0; // always anchor to at least 0
+
+    timeline.forEach(m => {
+      const p = m.cumulativePlanned;
+      const f = m.cumulativeForecast;
+      if (p > max) max = p;
+      if (f > max) max = f;
+      if (p < min) min = p;
+      if (f < min) min = f;
+    });
+
+    // Add some padding to domain bounds
+    const diff = max - min;
+    const padding = diff * 0.15 || 5000;
+    
+    return {
+      min: min - padding / 2,
+      max: max + padding
+    };
+  }, [timeline]);
+
+  // Calculate coordinates for timeline
+  const points = useMemo(() => {
+    const { min, max } = yBounds;
+    const rangeY = max - min || 1;
+    const usableHeight = chartHeight - paddingY * 2;
+
+    return timeline.map((m, index) => {
+      const x = paddingX + index * pointSpacing;
+      
+      // Calculate Y coords
+      const plannedY = chartHeight - paddingY - ((m.cumulativePlanned - min) / rangeY) * usableHeight;
+      const forecastY = chartHeight - paddingY - ((m.cumulativeForecast - min) / rangeY) * usableHeight;
+      
+      // Zero-balance baseline coordinate
+      const zeroY = chartHeight - paddingY - ((0 - min) / rangeY) * usableHeight;
+
+      return {
+        month: m.month,
+        label: m.label,
+        simpleLabel: m.simpleLabel,
+        year: m.year,
+        rawPlanned: m.cumulativePlanned,
+        rawForecast: m.cumulativeForecast,
+        x,
+        plannedY,
+        forecastY,
+        zeroY,
+        hasDeficit: m.hasDeficit
+      };
+    });
+  }, [timeline, yBounds, chartWidth]);
+
+  // Construct SVG paths
+  const paths = useMemo(() => {
+    if (points.length === 0) return { plannedLine: '', forecastLine: '', forecastArea: '' };
+
+    let plannedLine = `M ${points[0].x} ${points[0].plannedY}`;
+    let forecastLine = `M ${points[0].x} ${points[0].forecastY}`;
+    
+    // Area path needs to close at the baseline coordinate
+    let forecastArea = `M ${points[0].x} ${points[0].zeroY}`;
+    
+    points.forEach((p, idx) => {
+      if (idx > 0) {
+        plannedLine += ` L ${p.x} ${p.plannedY}`;
+        forecastLine += ` L ${p.x} ${p.forecastY}`;
+      }
+      forecastArea += ` L ${p.x} ${p.forecastY}`;
+    });
+
+    // Close the area path along the bottom zero-line
+    forecastArea += ` L ${points[points.length - 1].x} ${points[points.length - 1].zeroY} Z`;
+
+    return { plannedLine, forecastLine, forecastArea };
+  }, [points]);
+
+  // Horizontal Gridline values
+  const yGridLines = useMemo(() => {
+    const { min, max } = yBounds;
+    const step = (max - min) / 4;
+    const lines = [];
+    for (let i = 0; i <= 4; i++) {
+      const val = min + step * i;
+      const rangeY = max - min || 1;
+      const y = chartHeight - paddingY - ((val - min) / rangeY) * (chartHeight - paddingY * 2);
+      lines.push({ value: val, y });
+    }
+    return lines;
+  }, [yBounds]);
+
+  const formatCurrency = (val) => {
+    return `${summary.currencySymbol}${Math.round(val).toLocaleString()}`;
+  };
+
+  return (
+    <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: '600' }}>Cumulative Balance Forecast Trend</h2>
+        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+          Shows planned project cash balance vs actual forecasted balance over time.
+        </span>
+      </div>
+
+      <div 
+        className="chart-svg-wrapper" 
+        ref={containerRef}
+        style={{ overflowX: 'auto', border: '1px solid var(--border-subtle)', borderRadius: '10px', background: 'rgba(15, 23, 42, 0.4)' }}
+      >
+        <svg 
+          width={chartWidth} 
+          height={chartHeight}
+          className="chart-svg"
+          style={{ display: 'block' }}
+        >
+          <defs>
+            {/* Forecast Gradient for Area Fill */}
+            <linearGradient id="forecastAreaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--color-success)" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="var(--color-success)" stopOpacity="0.00" />
+            </linearGradient>
+            
+            {/* Deficit Gradient for visual highlights */}
+            <linearGradient id="deficitAreaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--color-danger)" stopOpacity="0.1" />
+              <stop offset="100%" stopColor="var(--color-danger)" stopOpacity="0.00" />
+            </linearGradient>
+          </defs>
+
+          {/* 1. Grid lines */}
+          {yGridLines.map((line, idx) => (
+            <g key={idx}>
+              <line 
+                x1={paddingX} 
+                y1={line.y} 
+                x2={chartWidth - paddingX} 
+                y2={line.y} 
+                className="chart-grid-line" 
+              />
+              <text 
+                x={12} 
+                y={line.y + 4} 
+                fill="var(--text-dim)" 
+                fontSize="10px"
+                fontWeight="500"
+              >
+                {formatCurrency(line.value)}
+              </text>
+            </g>
+          ))}
+
+          {/* 2. Zero Danger Baseline */}
+          {points.length > 0 && points[0].zeroY >= paddingY && points[0].zeroY <= chartHeight - paddingY && (
+            <g>
+              <line 
+                x1={paddingX} 
+                y1={points[0].zeroY} 
+                x2={chartWidth - paddingX} 
+                y2={points[0].zeroY} 
+                className="chart-zero-line" 
+              />
+              <text 
+                x={chartWidth - 110} 
+                y={points[0].zeroY - 6} 
+                fill="var(--color-danger)" 
+                fontSize="10px"
+                fontWeight="600"
+              >
+                ⚠️ DEFICIT THRESHOLD
+              </text>
+            </g>
+          )}
+
+          {/* 3. Year Columns dividers */}
+          {points.map((p, idx) => {
+            // Draw grid line for start of years
+            const isYearStart = idx === 0 || p.year !== points[idx - 1].year;
+            if (isYearStart) {
+              return (
+                <g key={`yr-${idx}`}>
+                  <line 
+                    x1={p.x} 
+                    y1={paddingY} 
+                    x2={p.x} 
+                    y2={chartHeight - paddingY} 
+                    stroke="rgba(255,255,255,0.05)" 
+                    strokeDasharray="2 2"
+                  />
+                  <text 
+                    x={p.x + 6} 
+                    y={paddingY - 10} 
+                    fill="var(--text-muted)" 
+                    fontSize="11px" 
+                    fontWeight="600"
+                  >
+                    {p.year}
+                  </text>
+                </g>
+              );
+            }
+            return null;
+          })}
+
+          {/* 4. Area path */}
+          {paths.forecastArea && (
+            <path d={paths.forecastArea} fill="url(#forecastAreaGrad)" />
+          )}
+
+          {/* 5. Trend Lines */}
+          {paths.plannedLine && (
+            <path d={paths.plannedLine} className="chart-line-planned" />
+          )}
+          {paths.forecastLine && (
+            <path d={paths.forecastLine} className="chart-line-forecast" />
+          )}
+
+          {/* 6. Active Month highlighting vertical bar */}
+          {selectedMonthKey && (
+            (() => {
+              const activePt = points.find(p => p.month === selectedMonthKey);
+              if (activePt) {
+                return (
+                  <rect 
+                    x={activePt.x - 16} 
+                    y={paddingY} 
+                    width={32} 
+                    height={chartHeight - paddingY * 2} 
+                    fill="rgba(99, 102, 241, 0.08)" 
+                    rx={6}
+                  />
+                );
+              }
+            })()
+          )}
+
+          {/* 7. Plot Dots */}
+          {points.map((p, idx) => {
+            const isSelected = p.month === selectedMonthKey;
+            return (
+              <g key={idx}>
+                {/* Planned Balance dots */}
+                <circle 
+                  cx={p.x} 
+                  cy={p.plannedY} 
+                  r={isSelected ? 5 : 3.5} 
+                  className={`chart-dot planned ${isSelected ? 'active' : ''}`}
+                  onClick={() => onSelectMonth(p.month)}
+                  onMouseEnter={() => setHoveredPoint({ ...p, type: 'Planned', value: p.rawPlanned })}
+                  onMouseLeave={() => setHoveredPoint(null)}
+                />
+                
+                {/* Forecast Balance dots */}
+                <circle 
+                  cx={p.x} 
+                  cy={p.forecastY} 
+                  r={isSelected ? 6 : 4} 
+                  className={`chart-dot forecast ${isSelected ? 'active' : ''}`}
+                  onClick={() => onSelectMonth(p.month)}
+                  onMouseEnter={() => setHoveredPoint({ ...p, type: 'Forecast', value: p.rawForecast })}
+                  onMouseLeave={() => setHoveredPoint(null)}
+                />
+              </g>
+            );
+          })}
+        </svg>
+
+        {/* Dynamic Tooltip overlay */}
+        {hoveredPoint && (
+          <div 
+            style={{
+              position: 'fixed',
+              top: `${hoveredPoint.y - 120}px`, // approximate hover placement
+              left: `${hoveredPoint.x + 40}px`,
+              pointerEvents: 'none',
+              transform: 'translate(-50%, -100%)',
+              zIndex: 1000,
+              background: 'var(--bg-panel-solid)',
+              border: `1px solid ${hoveredPoint.hasDeficit ? 'var(--color-danger)' : 'var(--border-subtle)'}`,
+              borderRadius: '8px',
+              padding: '10px 14px',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4px',
+              fontSize: '12px'
+            }}
+          >
+            <div style={{ fontWeight: '700', color: '#fff' }}>{hoveredPoint.label}</div>
+            <div style={{ color: 'var(--color-primary)' }}>
+              Planned: {formatCurrency(hoveredPoint.rawPlanned)}
+            </div>
+            <div style={{ color: 'var(--color-success)', fontWeight: '600' }}>
+              Forecast: {formatCurrency(hoveredPoint.rawForecast)}
+            </div>
+            {hoveredPoint.hasDeficit && (
+              <div style={{ color: 'var(--color-danger)', fontWeight: '700', fontSize: '11px', marginTop: '2px' }}>
+                ⚠️ CASH DEFICIT
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Legends */}
+      <div className="chart-legend">
+        <div className="legend-item">
+          <div className="legend-color" style={{ backgroundColor: 'var(--color-primary)' }} />
+          <span>Cumulative Planned Balance</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-color" style={{ backgroundColor: 'var(--color-success)' }} />
+          <span>Cumulative Forecasted Balance (Paid Actuals + Unpaid Planneds)</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-color" style={{ border: '1px dashed var(--color-danger)', height: '2px', width: '20px', borderRadius: '0' }} />
+          <span style={{ color: 'var(--color-danger)', fontWeight: '500' }}>Deficit Danger Zone ($0)</span>
+        </div>
+      </div>
+    </div>
+  );
+}
