@@ -3,6 +3,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMonth, summary }) {
   const [range, setRange] = useState('all'); // '12', '24', '36', 'all'
   const [hoveredPoint, setHoveredPoint] = useState(null);
+  const [containerWidth, setContainerWidth] = useState(800);
   const containerRef = useRef(null);
 
   // SVG Chart Dimensions
@@ -10,8 +11,33 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
   const paddingX = 75; // Increased left margin to make room for grid currency labels
   const paddingY = 35;
   
-  // Compute horizontal spacing based on timeline length
-  const pointSpacing = 42; // pixels per month
+  // Base spacing per month if scrolling
+  const minPointSpacing = 42;
+
+  // Track parent wrapper width for responsive scaling
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.clientWidth);
+      }
+    };
+    
+    // Initial measure
+    updateWidth();
+    
+    // Use ResizeObserver for accurate sizing on layout updates
+    const observer = new ResizeObserver(() => updateWidth());
+    observer.observe(containerRef.current);
+    
+    window.addEventListener('resize', updateWidth);
+    
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateWidth);
+    };
+  }, []);
 
   // Create filtered timeline using a sliding window centered around the selected month
   const filteredTimeline = useMemo(() => {
@@ -33,9 +59,18 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
     return timeline.slice(start, start + count);
   }, [timeline, range, selectedMonthKey]);
 
+  // Calculate dynamic chart width
   const chartWidth = useMemo(() => {
-    return Math.max(800, filteredTimeline.length * pointSpacing + paddingX * 2);
-  }, [filteredTimeline.length, paddingX]);
+    const minCalculated = filteredTimeline.length * minPointSpacing + paddingX * 2;
+    return Math.max(containerWidth, minCalculated);
+  }, [filteredTimeline.length, minPointSpacing, paddingX, containerWidth]);
+
+  // Calculate dynamic point spacing based on final chart width
+  const pointSpacing = useMemo(() => {
+    if (filteredTimeline.length <= 1) return 0;
+    const usableWidth = chartWidth - paddingX * 2;
+    return usableWidth / (filteredTimeline.length - 1);
+  }, [filteredTimeline.length, chartWidth, paddingX]);
 
   // Scroll the chart to active month
   useEffect(() => {
@@ -44,15 +79,15 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
       if (activeIdx !== -1) {
         const container = containerRef.current;
         const targetX = activeIdx * pointSpacing + paddingX;
-        const containerWidth = container.clientWidth;
+        const containerWidthVal = container.clientWidth;
         
         container.scrollTo({
-          left: targetX - containerWidth / 2,
+          left: targetX - containerWidthVal / 2,
           behavior: 'smooth'
         });
       }
     }
-  }, [selectedMonthKey, filteredTimeline]);
+  }, [selectedMonthKey, filteredTimeline, pointSpacing]);
 
   // Calculate Y domain bounds (min & max balance)
   const yBounds = useMemo(() => {
@@ -110,7 +145,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
         hasDeficit: m.hasDeficit
       };
     });
-  }, [filteredTimeline, yBounds, chartWidth]);
+  }, [filteredTimeline, yBounds, pointSpacing, chartWidth]);
 
   // Construct SVG paths
   const paths = useMemo(() => {
