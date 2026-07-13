@@ -1,24 +1,46 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 
 export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMonth, summary }) {
+  const [range, setRange] = useState('all'); // '12', '24', '36', 'all'
   const [hoveredPoint, setHoveredPoint] = useState(null);
   const containerRef = useRef(null);
 
   // SVG Chart Dimensions
   const chartHeight = 260;
-  const paddingX = 40;
-  const paddingY = 30;
+  const paddingX = 75; // Increased left margin to make room for grid currency labels
+  const paddingY = 35;
   
   // Compute horizontal spacing based on timeline length
   const pointSpacing = 42; // pixels per month
+
+  // Create filtered timeline using a sliding window centered around the selected month
+  const filteredTimeline = useMemo(() => {
+    if (range === 'all') return timeline;
+    const count = parseInt(range, 10);
+    if (timeline.length <= count) return timeline;
+
+    const activeIdx = timeline.findIndex(m => m.month === selectedMonthKey);
+    const safeIdx = activeIdx !== -1 ? activeIdx : 0;
+
+    // Center the selected month in the visible range
+    const half = Math.floor(count / 2);
+    let start = safeIdx - half;
+    if (start < 0) start = 0;
+    if (start + count > timeline.length) {
+      start = timeline.length - count;
+    }
+
+    return timeline.slice(start, start + count);
+  }, [timeline, range, selectedMonthKey]);
+
   const chartWidth = useMemo(() => {
-    return Math.max(800, timeline.length * pointSpacing + paddingX * 2);
-  }, [timeline.length]);
+    return Math.max(800, filteredTimeline.length * pointSpacing + paddingX * 2);
+  }, [filteredTimeline.length, paddingX]);
 
   // Scroll the chart to active month
   useEffect(() => {
     if (selectedMonthKey && containerRef.current) {
-      const activeIdx = timeline.findIndex(m => m.month === selectedMonthKey);
+      const activeIdx = filteredTimeline.findIndex(m => m.month === selectedMonthKey);
       if (activeIdx !== -1) {
         const container = containerRef.current;
         const targetX = activeIdx * pointSpacing + paddingX;
@@ -30,16 +52,16 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
         });
       }
     }
-  }, [selectedMonthKey, timeline]);
+  }, [selectedMonthKey, filteredTimeline]);
 
   // Calculate Y domain bounds (min & max balance)
   const yBounds = useMemo(() => {
-    if (timeline.length === 0) return { min: 0, max: 10000 };
+    if (filteredTimeline.length === 0) return { min: 0, max: 10000 };
     
     let max = -Infinity;
     let min = 0; // always anchor to at least 0
 
-    timeline.forEach(m => {
+    filteredTimeline.forEach(m => {
       const p = m.cumulativePlanned;
       const f = m.cumulativeForecast;
       if (p > max) max = p;
@@ -56,7 +78,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
       min: min - padding / 2,
       max: max + padding
     };
-  }, [timeline]);
+  }, [filteredTimeline]);
 
   // Calculate coordinates for timeline
   const points = useMemo(() => {
@@ -64,7 +86,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
     const rangeY = max - min || 1;
     const usableHeight = chartHeight - paddingY * 2;
 
-    return timeline.map((m, index) => {
+    return filteredTimeline.map((m, index) => {
       const x = paddingX + index * pointSpacing;
       
       // Calculate Y coords
@@ -88,7 +110,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
         hasDeficit: m.hasDeficit
       };
     });
-  }, [timeline, yBounds, chartWidth]);
+  }, [filteredTimeline, yBounds, chartWidth]);
 
   // Construct SVG paths
   const paths = useMemo(() => {
@@ -134,17 +156,55 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
 
   return (
     <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: '600' }}>Cumulative Balance Forecast Trend</h2>
-        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-          Shows planned project cash balance vs actual forecasted balance over time.
-        </span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: '600', color: '#fff' }}>Cumulative Balance Forecast Trend</h2>
+          <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+            Shows planned project cash balance vs actual forecasted balance over time.
+          </p>
+        </div>
+
+        {/* Display Range Buttons */}
+        <div className="tabs" style={{ background: 'rgba(15, 23, 42, 0.4)', border: '1px solid var(--border-subtle)', padding: '3px' }}>
+          <button
+            type="button"
+            className={`tab-btn ${range === '12' ? 'active' : ''}`}
+            onClick={() => setRange('12')}
+            style={{ fontSize: '11px', padding: '4px 10px' }}
+          >
+            1 Year
+          </button>
+          <button
+            type="button"
+            className={`tab-btn ${range === '24' ? 'active' : ''}`}
+            onClick={() => setRange('24')}
+            style={{ fontSize: '11px', padding: '4px 10px' }}
+          >
+            2 Years
+          </button>
+          <button
+            type="button"
+            className={`tab-btn ${range === '36' ? 'active' : ''}`}
+            onClick={() => setRange('36')}
+            style={{ fontSize: '11px', padding: '4px 10px' }}
+          >
+            3 Years
+          </button>
+          <button
+            type="button"
+            className={`tab-btn ${range === 'all' ? 'active' : ''}`}
+            onClick={() => setRange('all')}
+            style={{ fontSize: '11px', padding: '4px 10px' }}
+          >
+            All
+          </button>
+        </div>
       </div>
 
       <div 
         className="chart-svg-wrapper" 
         ref={containerRef}
-        style={{ overflowX: 'auto', border: '1px solid var(--border-subtle)', borderRadius: '10px', background: 'rgba(15, 23, 42, 0.4)' }}
+        style={{ position: 'relative', overflowX: 'auto', border: '1px solid var(--border-subtle)', borderRadius: '10px', background: 'rgba(15, 23, 42, 0.4)' }}
       >
         <svg 
           width={chartWidth} 
@@ -177,11 +237,12 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
                 className="chart-grid-line" 
               />
               <text 
-                x={12} 
+                x={paddingX - 12} 
                 y={line.y + 4} 
                 fill="var(--text-dim)" 
                 fontSize="10px"
                 fontWeight="500"
+                textAnchor="end"
               >
                 {formatCurrency(line.value)}
               </text>
@@ -199,7 +260,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
                 className="chart-zero-line" 
               />
               <text 
-                x={chartWidth - 110} 
+                x={chartWidth - 140} 
                 y={points[0].zeroY - 6} 
                 fill="var(--color-danger)" 
                 fontSize="10px"
@@ -284,7 +345,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
                   r={isSelected ? 5 : 3.5} 
                   className={`chart-dot planned ${isSelected ? 'active' : ''}`}
                   onClick={() => onSelectMonth(p.month)}
-                  onMouseEnter={() => setHoveredPoint({ ...p, type: 'Planned', value: p.rawPlanned })}
+                  onMouseEnter={() => setHoveredPoint({ ...p, type: 'Planned', value: p.rawPlanned, y: p.plannedY })}
                   onMouseLeave={() => setHoveredPoint(null)}
                 />
                 
@@ -295,7 +356,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
                   r={isSelected ? 6 : 4} 
                   className={`chart-dot forecast ${isSelected ? 'active' : ''}`}
                   onClick={() => onSelectMonth(p.month)}
-                  onMouseEnter={() => setHoveredPoint({ ...p, type: 'Forecast', value: p.rawForecast })}
+                  onMouseEnter={() => setHoveredPoint({ ...p, type: 'Forecast', value: p.rawForecast, y: p.forecastY })}
                   onMouseLeave={() => setHoveredPoint(null)}
                 />
               </g>
@@ -303,16 +364,16 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
           })}
         </svg>
 
-        {/* Dynamic Tooltip overlay */}
+        {/* Dynamic Tooltip overlay (scrolls absolute with chart container) */}
         {hoveredPoint && (
           <div 
             style={{
-              position: 'fixed',
-              top: `${hoveredPoint.y - 120}px`, // approximate hover placement
-              left: `${hoveredPoint.x + 40}px`,
+              position: 'absolute',
+              top: `${hoveredPoint.y - 12}px`, 
+              left: `${hoveredPoint.x}px`,
               pointerEvents: 'none',
               transform: 'translate(-50%, -100%)',
-              zIndex: 1000,
+              zIndex: 100,
               background: 'var(--bg-panel-solid)',
               border: `1px solid ${hoveredPoint.hasDeficit ? 'var(--color-danger)' : 'var(--border-subtle)'}`,
               borderRadius: '8px',
