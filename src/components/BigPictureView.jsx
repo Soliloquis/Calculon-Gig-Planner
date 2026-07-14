@@ -110,7 +110,7 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
           overflowX: 'auto',
           paddingBottom: '16px',
           alignItems: 'stretch',
-          scrollbarWidth: 'thin'
+          scrollbarWidth: 'auto'
         }}
       >
         {detailedYears.map(year => {
