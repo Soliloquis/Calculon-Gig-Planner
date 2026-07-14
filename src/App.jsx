@@ -83,19 +83,19 @@ export default function App() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
+            gap: '12px',
             background: 'rgba(99, 102, 241, 0.05)',
             border: '1px solid rgba(99, 102, 241, 0.15)',
             borderRadius: '99px',
-            padding: '5px 12px',
-            fontSize: '11px',
-            fontWeight: '600',
+            padding: '10px 24px',
+            fontSize: '33px',
+            fontWeight: '700',
             color: '#a5b4fc',
-            boxShadow: '0 0 10px rgba(99, 102, 241, 0.1)'
+            boxShadow: '0 0 20px rgba(99, 102, 241, 0.12)'
           }}
           title="Current Date"
         >
-          <span style={{ fontSize: '12px' }}>📅</span>
+          <span style={{ fontSize: '34px' }}>📅</span>
           <span>{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}</span>
         </div>
         
