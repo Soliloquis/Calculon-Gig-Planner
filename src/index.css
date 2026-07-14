@@ -347,6 +347,17 @@ body {
   background: rgba(16, 185, 129, 0.15) !important;
 }
 
+.day-cell.current-day {
+  border-color: var(--color-primary) !important;
+  background: rgba(99, 102, 241, 0.12) !important;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.25);
+}
+
+.day-cell.current-day .day-cell-number {
+  color: #a5b4fc;
+  font-weight: 700;
+}
+
 /* Draggable Colored Expense Block */
 .expense-block-pill {
   height: 14px;

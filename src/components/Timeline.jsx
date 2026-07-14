@@ -3,6 +3,12 @@ import React, { useState, useRef, useEffect } from 'react';
 export default function Timeline({ timeline, selectedMonthKey, onSelectMonth, dragAndDrop, summary, project }) {
   const [dragOverCell, setDragOverCell] = useState(null); // 'monthKey-day'
   const scrollContainerRef = useRef(null);
+  
+  const today = new Date();
+  const todayYear = today.getFullYear();
+  const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
+  const todayDay = today.getDate();
+  const todayMonthKey = `${todayYear}-${todayMonth}`;
 
   // Scroll active month into view on load
   useEffect(() => {
@@ -147,16 +153,17 @@ export default function Timeline({ timeline, selectedMonthKey, onSelectMonth, dr
 
                     const cellId = `${month.month}-${cell.day}`;
                     const isOver = cellId === dragOverCell;
+                    const isToday = month.month === todayMonthKey && cell.day === todayDay;
 
                     return (
                       <div
                         key={`day-${cell.day}`}
-                        className={`day-cell ${isOver ? 'drag-over' : ''}`}
+                        className={`day-cell ${isOver ? 'drag-over' : ''} ${isToday ? 'current-day' : ''}`}
                         onDragOver={(e) => dragAndDrop.onDragOver(e)}
                         onDragEnter={(e) => handleDragEnter(e, cellId)}
                         onDragLeave={handleDragLeave}
                         onDrop={(e) => handleDrop(e, month.month, cell.day)}
-                        title={`Day ${cell.day} - ${month.label}`}
+                        title={`Day ${cell.day} - ${month.label}${isToday ? ' (Today)' : ''}`}
                       >
                         <span className="day-cell-number">{cell.day}</span>
                         
