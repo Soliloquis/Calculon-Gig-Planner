@@ -41,8 +41,14 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
 
   // Create filtered timeline using a sliding window centered around the selected month
   const filteredTimeline = useMemo(() => {
-    if (range === 'all') return timeline;
-    const count = parseInt(range, 10);
+    // Cap visible timeline at 10 years (120 months) when showing "All"
+    let count = timeline.length;
+    if (range === 'all') {
+      count = Math.min(timeline.length, 120);
+    } else {
+      count = parseInt(range, 10);
+    }
+
     if (timeline.length <= count) return timeline;
 
     const activeIdx = timeline.findIndex(m => m.month === selectedMonthKey);
@@ -230,6 +236,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
             className={`tab-btn ${range === 'all' ? 'active' : ''}`}
             onClick={() => setRange('all')}
             style={{ fontSize: '13px', padding: '6px 12px' }}
+            title="Show all months, capped at 10 years max"
           >
             All
           </button>
