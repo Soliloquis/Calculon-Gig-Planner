@@ -76,6 +76,28 @@ export default function App() {
             </span>
           </div>
         </div>
+
+        {/* Today's Date Badge */}
+        <div 
+          className="today-date-badge" 
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'rgba(99, 102, 241, 0.05)',
+            border: '1px solid rgba(99, 102, 241, 0.15)',
+            borderRadius: '99px',
+            padding: '5px 12px',
+            fontSize: '11px',
+            fontWeight: '600',
+            color: '#a5b4fc',
+            boxShadow: '0 0 10px rgba(99, 102, 241, 0.1)'
+          }}
+          title="Current Date"
+        >
+          <span style={{ fontSize: '12px' }}>📅</span>
+          <span>{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}</span>
+        </div>
         
         {/* Navigation Tabs */}
         <div className="tabs">
