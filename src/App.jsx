@@ -121,7 +121,6 @@ export default function App() {
         onSelectMonth={setSelectedMonthKey}
         project={project}
         updateProjectMeta={updateProjectMeta}
-        onOpenBigPicture={() => setActiveTab('bigpicture')}
       />
 
       {/* Main Workspace Content */}

@@ -7,8 +7,7 @@ export default function Dashboard({
   selectedMonthKey,
   onSelectMonth,
   project,
-  updateProjectMeta,
-  onOpenBigPicture
+  updateProjectMeta
 }) {
   const {
     totalAllocatedIncome,
@@ -121,17 +120,6 @@ export default function Dashboard({
             {currentBalance < 0 ? '🔴 Over budget deficit' : '🟢 Solved & funded cashflow'}
           </div>
         </div>
-      </div>
-
-      {/* Button to open Big Picture Modal */}
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <button 
-          className="btn btn-secondary" 
-          onClick={onOpenBigPicture}
-          style={{ gap: '8px', fontSize: '13px', padding: '8px 16px', border: '1px solid var(--color-primary)' }}
-        >
-          📊 View Project Big Picture & Annual Summaries
-        </button>
       </div>
 
     </div>
