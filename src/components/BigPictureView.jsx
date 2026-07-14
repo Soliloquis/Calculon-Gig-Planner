@@ -115,6 +115,22 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
       >
         {detailedYears.map(year => {
           const isSurplus = year.margin >= 0;
+          
+          // Calculate slices for the SVG donut chart
+          let accumulatedPercent = 0;
+          const slices = year.categoryTotalsList.map(cat => {
+            const percent = year.outflow > 0 ? (cat.amount / year.outflow) : 0;
+            const strokeDasharray = `${percent * 219.91} 219.91`;
+            const strokeDashoffset = -accumulatedPercent * 219.91;
+            accumulatedPercent += percent;
+            return {
+              ...cat,
+              percent,
+              strokeDasharray,
+              strokeDashoffset
+            };
+          });
+
           return (
             <div
               key={year.year}
@@ -231,40 +247,100 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
                 )}
               </div>
 
-              {/* Year Category Breakdowns */}
+              {/* Year Category Breakdowns (SVG Donut Chart) */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
                 <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   📊 Year Category breakdown
                 </span>
 
-                {year.categoryTotalsList.length > 0 ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '4px' }}>
-                    {year.categoryTotalsList.map(cat => {
-                      const percentage = year.maxCatCost > 0 ? (cat.amount / year.maxCatCost) * 100 : 0;
-                      return (
-                        <div key={cat.id} style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
-                            <span style={{ color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <span>{cat.icon}</span> <span>{cat.name}</span>
-                            </span>
-                            <span style={{ fontWeight: '600', color: '#fff' }}>{formatVal(cat.amount)}</span>
-                          </div>
-                          
-                          {/* Colored Progress Bar */}
-                          <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
-                            <div 
+                {slices.length > 0 ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '6px' }}>
+                    {/* SVG Donut Chart wrapper */}
+                    <div style={{ position: 'relative', width: '100px', height: '100px', flexShrink: 0 }}>
+                      <svg width="100" height="100" viewBox="0 0 100 100">
+                        <circle 
+                          cx="50" 
+                          cy="50" 
+                          r="35" 
+                          fill="transparent" 
+                          stroke="rgba(255,255,255,0.05)" 
+                          strokeWidth="10" 
+                        />
+                        {slices.map((slice) => (
+                          <circle
+                            key={slice.id}
+                            cx="50"
+                            cy="50"
+                            r="35"
+                            fill="transparent"
+                            stroke={slice.color}
+                            strokeWidth="10"
+                            strokeDasharray={slice.strokeDasharray}
+                            strokeDashoffset={slice.strokeDashoffset}
+                            transform="rotate(-90 50 50)"
+                            style={{ transition: 'stroke-dashoffset 0.3s ease' }}
+                          />
+                        ))}
+                      </svg>
+                      {/* Total Centered Labels Overlay */}
+                      <div 
+                        style={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          pointerEvents: 'none',
+                          lineHeight: '1.1'
+                        }}
+                      >
+                        <span style={{ fontSize: '8px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '700' }}>Outflow</span>
+                        <span style={{ fontSize: '11px', fontWeight: '800', color: '#fff' }}>
+                          {formatVal(year.outflow)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Donut Legend */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1, minWidth: 0 }}>
+                      {slices.map(slice => (
+                        <div key={slice.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', gap: '4px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+                            <span 
                               style={{ 
-                                height: '100%', 
-                                background: cat.color, 
-                                width: `${percentage}%`,
-                                borderRadius: '2px',
-                                boxShadow: `0 0 4px ${cat.color}`
+                                width: '8px', 
+                                height: '8px', 
+                                borderRadius: '50%', 
+                                background: slice.color, 
+                                flexShrink: 0 
                               }} 
                             />
+                            <span 
+                              style={{ 
+                                color: '#e2e8f0', 
+                                whiteSpace: 'nowrap', 
+                                overflow: 'hidden', 
+                                textOverflow: 'ellipsis' 
+                              }}
+                              title={`${slice.icon} ${slice.name}`}
+                            >
+                              {slice.icon} {slice.name}
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                            <span style={{ color: 'var(--text-dim)', fontSize: '10px', fontWeight: '600' }}>
+                              {Math.round(slice.percent * 100)}%
+                            </span>
+                            <span style={{ fontWeight: '700', color: '#fff' }}>
+                              {formatVal(slice.amount)}
+                            </span>
                           </div>
                         </div>
-                      );
-                    })}
+                      ))}
+                    </div>
                   </div>
                 ) : (
                   <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontStyle: 'italic', padding: '2px 0' }}>
