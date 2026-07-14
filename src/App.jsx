@@ -56,22 +56,22 @@ export default function App() {
     <div className="app-container">
       {/* App Header */}
       <header className="app-header">
-        <div className="brand" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="brand" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <img 
             src={LOGO_BASE64} 
             alt="Calculon Logo" 
             style={{ 
-              width: '32px', 
-              height: '32px', 
-              borderRadius: '6px', 
+              width: '64px', 
+              height: '64px', 
+              borderRadius: '12px', 
               border: '1px solid rgba(255,255,255,0.08)',
-              boxShadow: '0 2px 8px rgba(99, 102, 241, 0.2)',
+              boxShadow: '0 4px 16px rgba(99, 102, 241, 0.25)',
               objectFit: 'contain'
             }} 
           />
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <h1 style={{ fontSize: '20px', lineHeight: '1.1' }}>Calculon</h1>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', background: 'transparent', border: 'none', padding: '0', alignSelf: 'flex-start', margin: '0' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            <h1 style={{ fontSize: '36px', lineHeight: '1.05', fontWeight: '800' }}>Calculon</h1>
+            <span style={{ fontSize: '16px', color: 'var(--text-muted)', background: 'transparent', border: 'none', padding: '0', alignSelf: 'flex-start', margin: '0' }}>
               The Gig Planner
             </span>
           </div>
