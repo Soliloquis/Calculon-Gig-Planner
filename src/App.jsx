@@ -6,7 +6,7 @@ import MonthDetail from './components/MonthDetail';
 import CashFlowChart from './components/CashFlowChart';
 import CategoriesEditor from './components/CategoriesEditor';
 import ImportExport from './components/ImportExport';
-import BigPictureModal from './components/BigPictureModal';
+import BigPictureView from './components/BigPictureView';
 import RecurringExpenses from './components/RecurringExpenses';
 import RecurringAnnualExpenses from './components/RecurringAnnualExpenses';
 import { LOGO_BASE64 } from './assets/logoBase64';
@@ -42,7 +42,6 @@ export default function App() {
 
   const [activeTab, setActiveTab] = useState('timeline');
   const [selectedMonthKey, setSelectedMonthKey] = useState('');
-  const [isBigPictureOpen, setIsBigPictureOpen] = useState(false);
 
   // Default to first month
   useEffect(() => {
@@ -87,6 +86,12 @@ export default function App() {
             📅 Calendar Board
           </button>
           <button
+            className={`tab-btn ${activeTab === 'bigpicture' ? 'active' : ''}`}
+            onClick={() => setActiveTab('bigpicture')}
+          >
+            📊 Big Picture
+          </button>
+          <button
             className={`tab-btn ${activeTab === 'chart' ? 'active' : ''}`}
             onClick={() => setActiveTab('chart')}
           >
@@ -116,11 +121,20 @@ export default function App() {
         onSelectMonth={setSelectedMonthKey}
         project={project}
         updateProjectMeta={updateProjectMeta}
-        onOpenBigPicture={() => setIsBigPictureOpen(true)}
+        onOpenBigPicture={() => setActiveTab('bigpicture')}
       />
 
       {/* Main Workspace Content */}
       <main style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {activeTab === 'bigpicture' && (
+          <BigPictureView
+            timeline={timeline}
+            annualSummary={annualSummary}
+            summary={summary}
+            project={project}
+          />
+        )}
+
         {activeTab === 'timeline' && (
           <>
             {/* Recurring Monthly Expenses Manager */}
@@ -218,14 +232,6 @@ export default function App() {
           />
         )}
       </main>
-
-      {/* Big Picture Projections Modal */}
-      <BigPictureModal
-        isOpen={isBigPictureOpen}
-        onClose={() => setIsBigPictureOpen(false)}
-        annualSummary={annualSummary}
-        summary={summary}
-      />
 
       {/* Footer */}
       <footer style={{ marginTop: 'auto', borderTop: '1px solid var(--border-subtle)', paddingTop: '12px', display: 'flex', justifyBetween: 'center', alignItems: 'center', fontSize: '11px', color: 'var(--text-dim)' }}>
