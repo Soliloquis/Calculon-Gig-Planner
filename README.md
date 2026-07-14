@@ -1,3 +1,6 @@
+# Welcome to Calculon
+This application was built to be, essentially, a fancy calculator. It requires no personal information (other than the expenses obviously), requires no connection to the internet to use, and was built to be used by solo indie devs and small teams where work is most likely managed like a side gig with a consistent monthly budget.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
