@@ -113,8 +113,11 @@ export const useProjectBudget = () => {
     const prevMonth = index > 0 ? acc[index - 1] : null;
 
     // Funding is flat and project-wide
-    const baseAllocation = project.defaultMonthlyAllocation;
-    const totalInjections = (monthData.injections || []).reduce((sum, item) => sum + item.amount, 0);
+    const baseAllocation = Number.isFinite(Number(project.defaultMonthlyAllocation)) ? Number(project.defaultMonthlyAllocation) : 0;
+    const totalInjections = (monthData.injections || []).reduce((sum, item) => {
+      const amt = Number(item.amount);
+      return sum + (Number.isFinite(amt) ? amt : 0);
+    }, 0);
     const totalIncome = baseAllocation + totalInjections;
 
     // Resolve month expenses: combine custom specific items with templates (excluding locally deleted ones)
@@ -135,8 +138,8 @@ export const useProjectBudget = () => {
         day: re.day,
         category: re.category,
         description: re.description,
-        plannedAmount: re.plannedAmount,
-        actualAmount: re.plannedAmount,
+        plannedAmount: Number(re.plannedAmount) || 0,
+        actualAmount: Number(re.plannedAmount) || 0,
         isPaid: false
       };
     }).filter(e => !e.isExcluded);
@@ -156,8 +159,8 @@ export const useProjectBudget = () => {
         day: re.day,
         category: re.category,
         description: re.description,
-        plannedAmount: re.plannedAmount,
-        actualAmount: re.plannedAmount,
+        plannedAmount: Number(re.plannedAmount) || 0,
+        actualAmount: Number(re.plannedAmount) || 0,
         isPaid: false
       };
     }).filter(e => !e.isExcluded);
@@ -165,10 +168,21 @@ export const useProjectBudget = () => {
     const recurringExpenses = [...projectedMonthly, ...projectedAnnual];
     const allExpenses = [...customSpecific, ...recurringExpenses];
 
-    const plannedExpenses = allExpenses.reduce((sum, e) => sum + (e.plannedAmount || 0), 0);
-    const actualExpenses = allExpenses.reduce((sum, e) => sum + (e.actualAmount || 0), 0);
+    const plannedExpenses = allExpenses.reduce((sum, e) => {
+      const amt = Number(e.plannedAmount);
+      return sum + (Number.isFinite(amt) ? amt : 0);
+    }, 0);
+    const actualExpenses = allExpenses.reduce((sum, e) => {
+      const amt = Number(e.actualAmount);
+      return sum + (Number.isFinite(amt) ? amt : 0);
+    }, 0);
     const effectiveExpenses = allExpenses.reduce((sum, e) => {
-      return sum + (e.isPaid ? (e.actualAmount || 0) : (e.plannedAmount || 0));
+      const plannedAmt = Number(e.plannedAmount);
+      const actualAmt = Number(e.actualAmount);
+      const resolvedAmt = e.isPaid 
+        ? (Number.isFinite(actualAmt) ? actualAmt : 0) 
+        : (Number.isFinite(plannedAmt) ? plannedAmt : 0);
+      return sum + resolvedAmt;
     }, 0);
 
     const monthlySurplus = totalIncome - effectiveExpenses;

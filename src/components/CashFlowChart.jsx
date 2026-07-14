@@ -103,13 +103,15 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
     let min = 0; // always anchor to at least 0
 
     filteredTimeline.forEach(m => {
-      const p = m.cumulativePlanned;
-      const f = m.cumulativeForecast;
+      const p = (m.cumulativePlanned && Number.isFinite(m.cumulativePlanned)) ? m.cumulativePlanned : 0;
+      const f = (m.cumulativeForecast && Number.isFinite(m.cumulativeForecast)) ? m.cumulativeForecast : 0;
       if (p > max) max = p;
       if (f > max) max = f;
       if (p < min) min = p;
       if (f < min) min = f;
     });
+
+    if (max === -Infinity) max = 10000;
 
     // Add some padding to domain bounds
     const diff = max - min;
@@ -130,9 +132,12 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
     return filteredTimeline.map((m, index) => {
       const x = paddingX + index * pointSpacing;
       
+      const rawPlanned = (m.cumulativePlanned && Number.isFinite(m.cumulativePlanned)) ? m.cumulativePlanned : 0;
+      const rawForecast = (m.cumulativeForecast && Number.isFinite(m.cumulativeForecast)) ? m.cumulativeForecast : 0;
+
       // Calculate Y coords
-      const plannedY = chartHeight - paddingY - ((m.cumulativePlanned - min) / rangeY) * usableHeight;
-      const forecastY = chartHeight - paddingY - ((m.cumulativeForecast - min) / rangeY) * usableHeight;
+      const plannedY = chartHeight - paddingY - ((rawPlanned - min) / rangeY) * usableHeight;
+      const forecastY = chartHeight - paddingY - ((rawForecast - min) / rangeY) * usableHeight;
       
       // Zero-balance baseline coordinate
       const zeroY = chartHeight - paddingY - ((0 - min) / rangeY) * usableHeight;
@@ -142,8 +147,8 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
         label: m.label,
         simpleLabel: m.simpleLabel,
         year: m.year,
-        rawPlanned: m.cumulativePlanned,
-        rawForecast: m.cumulativeForecast,
+        rawPlanned,
+        rawForecast,
         x,
         plannedY,
         forecastY,
