@@ -82,19 +82,19 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
           <div className="metric-card" style={{ background: 'rgba(30, 41, 67, 0.3)', border: '1px solid var(--border-subtle)', padding: '14px 18px', borderRadius: '10px' }}>
-            <span className="metric-label" style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '600' }}>Total Timeline Funding</span>
+            <span className="metric-label" style={{ fontSize: '13px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '600' }}>Total Timeline Funding</span>
             <span className="metric-val" style={{ fontSize: '20px', fontWeight: '700', display: 'block', marginTop: '4px' }}>{formatVal(totalIncome)}</span>
           </div>
           <div className="metric-card" style={{ background: 'rgba(30, 41, 67, 0.3)', border: '1px solid var(--border-subtle)', padding: '14px 18px', borderRadius: '10px' }}>
-            <span className="metric-label" style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '600' }}>Total Planned Expenses</span>
+            <span className="metric-label" style={{ fontSize: '13px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '600' }}>Total Planned Expenses</span>
             <span className="metric-val" style={{ fontSize: '20px', fontWeight: '700', display: 'block', marginTop: '4px', color: 'var(--color-primary)' }}>{formatVal(totalPlannedExpenses)}</span>
           </div>
           <div className="metric-card" style={{ background: 'rgba(30, 41, 67, 0.3)', border: '1px solid var(--border-subtle)', padding: '14px 18px', borderRadius: '10px' }}>
-            <span className="metric-label" style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '600' }}>Total Spent To-Date</span>
+            <span className="metric-label" style={{ fontSize: '13px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '600' }}>Total Spent To-Date</span>
             <span className="metric-val" style={{ fontSize: '20px', fontWeight: '700', display: 'block', marginTop: '4px', color: 'var(--color-success)' }}>{formatVal(totalActualSpent)}</span>
           </div>
           <div className="metric-card" style={{ background: 'rgba(30, 41, 67, 0.3)', border: '1px solid var(--border-subtle)', padding: '14px 18px', borderRadius: '10px' }}>
-            <span className="metric-label" style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '600' }}>Final Projected Balance</span>
+            <span className="metric-label" style={{ fontSize: '13px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '600' }}>Final Projected Balance</span>
             <span className="metric-val" style={{ fontSize: '20px', fontWeight: '700', display: 'block', marginTop: '4px', color: currentBalance >= 0 ? 'var(--color-success)' : 'var(--color-danger)' }}>
               {formatVal(currentBalance)}
             </span>
@@ -161,7 +161,7 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
                 <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#fff' }}>Year {year.year}</h3>
                 <span
                   style={{
-                    fontSize: '11px',
+                    fontSize: '13px',
                     fontWeight: '700',
                     padding: '3px 8px',
                     borderRadius: '6px',
@@ -176,29 +176,29 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
 
               {/* Vertical Metrics Stack */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(0, 0, 0, 0.15)', padding: '12px', borderRadius: '8px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
                   <span style={{ color: 'var(--text-dim)' }}>Base Funding</span>
                   <span style={{ fontWeight: '500', color: '#e2e8f0' }}>{formatVal(year.baseFunding)}</span>
                 </div>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
                   <span style={{ color: 'var(--text-dim)' }}>Injections</span>
                   <span style={{ color: 'var(--color-success)', fontWeight: '500' }}>
                     {year.injections > 0 ? `+${formatVal(year.injections)}` : '—'}
                   </span>
                 </div>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', borderBottom: '1px dashed rgba(255,255,255,0.06)', paddingBottom: '6px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', borderBottom: '1px dashed rgba(255,255,255,0.06)', paddingBottom: '6px' }}>
                   <span style={{ color: 'var(--text-dim)' }}>Net Funding</span>
                   <span style={{ fontWeight: '600', color: '#fff' }}>{formatVal(year.netFunding)}</span>
                 </div>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', paddingTop: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', paddingTop: '4px' }}>
                   <span style={{ color: 'var(--text-dim)' }}>Annual Outflow</span>
                   <span style={{ color: 'var(--color-primary)', fontWeight: '500' }}>{formatVal(year.outflow)}</span>
                 </div>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', marginTop: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', marginTop: '4px' }}>
                   <span style={{ fontWeight: '700', color: '#fff' }}>Annual Margin</span>
                   <span style={{ fontWeight: '800', color: isSurplus ? 'var(--color-success)' : 'var(--color-danger)' }}>
                     {isSurplus ? '+' : ''}{formatVal(year.margin)}
@@ -208,7 +208,7 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
 
               {/* Recurring Annual Expenses Details */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   🗓️ Recurring Annual Scheduled
                 </span>
                 
@@ -221,7 +221,7 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
                           display: 'flex', 
                           justifyContent: 'space-between', 
                           alignItems: 'center', 
-                          fontSize: '12px', 
+                          fontSize: '13px', 
                           background: 'rgba(30, 41, 67, 0.25)', 
                           padding: '6px 10px', 
                           borderRadius: '6px', 
@@ -234,14 +234,14 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
                           </span>
                           <span style={{ color: '#fff', fontWeight: '500' }}>{exp.description}</span>
                         </div>
-                        <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
                           {formatVal(exp.actualAmount !== undefined ? exp.actualAmount : exp.plannedAmount)} ({exp.monthLabel})
                         </span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontStyle: 'italic', padding: '2px 0' }}>
+                  <div style={{ fontSize: '13px', color: 'var(--text-dim)', fontStyle: 'italic', padding: '2px 0' }}>
                     No recurring annual expenses projected.
                   </div>
                 )}
@@ -249,7 +249,7 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
 
               {/* Year Category Breakdowns (SVG Donut Chart) */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
-                <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   📊 Year Category breakdown
                 </span>
 
@@ -307,7 +307,7 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
                     {/* Donut Legend (spans full width below chart) */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
                       {slices.map(slice => (
-                        <div key={slice.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', gap: '4px' }}>
+                        <div key={slice.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', gap: '4px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
                             <span 
                               style={{ 
@@ -331,7 +331,7 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
                             </span>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-                            <span style={{ color: 'var(--text-dim)', fontSize: '10px', fontWeight: '600' }}>
+                            <span style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: '600' }}>
                               {Math.round(slice.percent * 100)}%
                             </span>
                             <span style={{ fontWeight: '700', color: '#fff' }}>
@@ -343,7 +343,7 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
                     </div>
                   </div>
                 ) : (
-                  <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontStyle: 'italic', padding: '2px 0' }}>
+                  <div style={{ fontSize: '13px', color: 'var(--text-dim)', fontStyle: 'italic', padding: '2px 0' }}>
                     No expenses logged for this year.
                   </div>
                 )}

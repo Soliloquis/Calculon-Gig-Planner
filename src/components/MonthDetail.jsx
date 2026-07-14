@@ -132,7 +132,7 @@ export default function MonthDetail({
 
           {/* Category-wise totals */}
           <div style={{ marginTop: '4px' }}>
-            <h4 style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Category Breakdowns
             </h4>
             <div className="category-totals-list">
@@ -154,7 +154,7 @@ export default function MonthDetail({
           <button
             className={`btn ${isClosed ? 'btn-secondary' : 'btn-primary'}`}
             onClick={() => toggleMonthClosed(month)}
-            style={{ width: '100%', fontSize: '11px', padding: '6px 12px', marginTop: '4px' }}
+            style={{ width: '100%', fontSize: '13px', padding: '6px 12px', marginTop: '4px' }}
           >
             {isClosed ? '🔓 Unlock Planning' : '🔒 Finalize / Lock Month'}
           </button>
@@ -204,12 +204,12 @@ export default function MonthDetail({
                   onChange={(e) => setNewInjDesc(e.target.value)}
                 />
                 <div className="input-wrapper" style={{ width: '110px' }}>
-                  <span className="input-prefix" style={{ fontSize: '11px', left: '8px' }}>{currencySymbol}</span>
+                  <span className="input-prefix" style={{ fontSize: '13px', left: '8px' }}>{currencySymbol}</span>
                   <input
                     type="number"
                     className="form-input has-prefix"
                     placeholder="Amount"
-                    style={{ paddingLeft: '18px' }}
+                    style={{ paddingLeft: '20px' }}
                     value={newInjAmount}
                     onChange={(e) => setNewInjAmount(e.target.value)}
                   />
@@ -263,9 +263,9 @@ export default function MonthDetail({
                               border: '1px solid var(--border-subtle)',
                               borderRadius: '4px',
                               color: '#fff',
-                              fontSize: '11px',
+                              fontSize: '13px',
                               padding: '2px 4px',
-                              width: '40px',
+                              width: '56px',
                               fontFamily: 'var(--font-sans)'
                             }}
                           >
@@ -291,9 +291,9 @@ export default function MonthDetail({
                               border: '1px solid var(--border-subtle)',
                               borderRadius: '4px',
                               color: '#fff',
-                              fontSize: '11px',
+                              fontSize: '13px',
                               padding: '2px 4px',
-                              width: '76px',
+                              width: '92px',
                               fontFamily: 'var(--font-sans)'
                             }}
                           >
@@ -322,7 +322,7 @@ export default function MonthDetail({
 
                       {/* Planned Amount */}
                       <div className="input-wrapper">
-                        {!(isClosed || exp.recurringSourceId) && <span className="input-prefix" style={{ fontSize: '10px', left: '6px' }}>{currencySymbol}</span>}
+                        {!(isClosed || exp.recurringSourceId) && <span className="input-prefix" style={{ fontSize: '12px', left: '6px' }}>{currencySymbol}</span>}
                         <input
                           type="number"
                           value={formatInputVal(exp.plannedAmount)}
@@ -340,7 +340,7 @@ export default function MonthDetail({
 
                       {/* Actual Amount */}
                       <div className="input-wrapper">
-                        {!isClosed && <span className="input-prefix" style={{ fontSize: '10px', left: '6px' }}>{currencySymbol}</span>}
+                        {!isClosed && <span className="input-prefix" style={{ fontSize: '12px', left: '6px' }}>{currencySymbol}</span>}
                         <input
                           type="number"
                           value={formatInputVal(exp.actualAmount)}
@@ -453,7 +453,7 @@ export default function MonthDetail({
 
           {/* Monthly notes logger */}
           <div className="form-group">
-            <label style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)' }}>📝 Month Notes & Log</label>
+            <label style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-muted)' }}>📝 Month Notes & Log</label>
             <textarea
               className="form-input"
               placeholder="Record notes, contract details, or delays for this month..."

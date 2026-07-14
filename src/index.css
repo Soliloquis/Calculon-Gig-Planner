@@ -120,7 +120,7 @@ body {
   color: #a5b4fc;
   padding: 2px 6px;
   border-radius: 99px;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -187,7 +187,7 @@ body {
 .metric-card.danger::before { background: var(--color-danger); }
 
 .metric-label {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
@@ -200,7 +200,7 @@ body {
 }
 
 .metric-sub {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text-dim);
 }
 
@@ -211,7 +211,7 @@ body {
   color: #fca5a5;
   border-radius: 6px;
   padding: 8px 12px;
-  font-size: 11px;
+  font-size: 13px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -301,7 +301,7 @@ body {
 }
 
 .weekday-header {
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-dim);
 }
@@ -334,7 +334,7 @@ body {
 }
 
 .day-cell-number {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--text-muted);
   font-weight: 500;
   text-align: right;
@@ -360,8 +360,8 @@ body {
 
 /* Draggable Colored Expense Block */
 .expense-block-pill {
-  height: 14px;
-  font-size: 9px;
+  height: 18px;
+  font-size: 11px;
   font-weight: 700;
   color: #fff;
   padding: 0 4px;
@@ -372,7 +372,7 @@ body {
   margin-top: 1.5px;
   cursor: grab;
   text-align: center;
-  line-height: 14px;
+  line-height: 18px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
@@ -420,7 +420,7 @@ body {
   background: rgba(30, 41, 67, 0.18);
   border: 1px solid var(--border-subtle);
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .category-total-val {
@@ -436,7 +436,7 @@ body {
 }
 
 .form-group label {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-muted);
   font-weight: 500;
 }
@@ -451,7 +451,7 @@ body {
   position: absolute;
   left: 10px;
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .form-input {
@@ -462,7 +462,7 @@ body {
   padding: 6px 8px;
   color: var(--text-main);
   font-family: var(--font-sans);
-  font-size: 12px;
+  font-size: 14px;
   transition: var(--transition-fast);
 }
 
@@ -494,7 +494,7 @@ body {
   padding: 4px 8px;
   border-bottom: 2px solid var(--border-subtle);
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -529,7 +529,7 @@ body {
   gap: 3px;
   padding: 1px 4px;
   border-radius: 4px;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -553,7 +553,7 @@ body {
 .custom-checkbox.checked::after {
   content: '✓';
   color: #fff;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
 }
 
@@ -582,7 +582,7 @@ body {
   padding: 4px 8px;
   border-radius: 4px;
   border: 1px solid var(--border-subtle);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .injection-amount {
@@ -616,10 +616,10 @@ body {
 .totals-stat-row {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 13px;
 }
 .totals-stat-row.surplus {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   border-top: 1px solid var(--border-subtle);
   padding-top: 4px;
@@ -635,7 +635,7 @@ body {
   justify-content: center;
   gap: 4px;
   padding: 6px 10px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   border-radius: 4px;
   cursor: pointer;
@@ -770,7 +770,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 20px;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .legend-item {
@@ -804,7 +804,7 @@ body {
 }
 
 .settings-card h3 {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   border-bottom: 1px solid var(--border-subtle);
   padding-bottom: 4px;
@@ -855,14 +855,14 @@ body {
   width: 100%;
   border-collapse: collapse;
   margin: 16px 0;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .big-picture-table th {
   color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: 13px;
   padding: 10px;
   border-bottom: 2px solid var(--border-subtle);
 }

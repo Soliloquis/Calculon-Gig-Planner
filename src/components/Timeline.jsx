@@ -57,8 +57,8 @@ export default function Timeline({ timeline, selectedMonthKey, onSelectMonth, dr
     <div className="timeline-section glass-panel">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: '700' }}>Project Timeline Boards ({timeline.length} Months)</h2>
-          <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: '700' }}>Project Timeline Boards ({timeline.length} Months)</h2>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
             📅 Click a month to inspect breakdowns. Drag a colored expense pill and drop it on any day cell to reschedule.
           </p>
         </div>
@@ -68,7 +68,7 @@ export default function Timeline({ timeline, selectedMonthKey, onSelectMonth, dr
             onClick={() => {
               if (scrollContainerRef.current) scrollContainerRef.current.scrollLeft -= 320;
             }}
-            style={{ padding: '4px 8px', fontSize: '11px' }}
+            style={{ padding: '6px 12px', fontSize: '13px' }}
           >
             ◀ Left
           </button>
@@ -77,7 +77,7 @@ export default function Timeline({ timeline, selectedMonthKey, onSelectMonth, dr
             onClick={() => {
               if (scrollContainerRef.current) scrollContainerRef.current.scrollLeft += 320;
             }}
-            style={{ padding: '4px 8px', fontSize: '11px' }}
+            style={{ padding: '6px 12px', fontSize: '13px' }}
           >
             Right ▶
           </button>

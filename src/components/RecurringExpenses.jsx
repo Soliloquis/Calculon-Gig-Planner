@@ -68,10 +68,10 @@ export default function RecurringExpenses({
   return (
     <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '6px' }}>
-        <h3 style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        <h3 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           🔄 Recurring Monthly Expenses
         </h3>
-        <span style={{ fontSize: '10px', color: 'var(--text-dim)' }}>
+        <span style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
           {editingId ? '⚠️ Editing recurring item details' : 'Projected automatically on every month card'}
         </span>
       </div>
@@ -108,7 +108,7 @@ export default function RecurringExpenses({
         <div className="form-group">
           <label>Planned Cost</label>
           <div className="input-wrapper">
-            <span className="input-prefix" style={{ color: 'var(--text-dim)', fontSize: '13px', left: '10px' }}>{currencySymbol}</span>
+            <span className="input-prefix" style={{ color: 'var(--text-dim)', fontSize: '15px', left: '10px' }}>{currencySymbol}</span>
             <input
               type="number"
               className="form-input has-prefix"
@@ -146,7 +146,7 @@ export default function RecurringExpenses({
         </div>
 
         <div style={{ display: 'flex', gap: '4px', width: '100%', alignItems: 'end' }}>
-          <button type="submit" className="btn btn-primary" style={{ height: '31px', flex: 1, padding: '0 4px', fontSize: '11px' }}>
+          <button type="submit" className="btn btn-primary" style={{ height: '31px', flex: 1, padding: '0 8px', fontSize: '13px' }}>
             {editingId ? '💾 Save' : '➕ Add'}
           </button>
           {editingId && (
@@ -154,7 +154,7 @@ export default function RecurringExpenses({
               type="button" 
               className="btn btn-secondary" 
               onClick={handleCancelEdit} 
-              style={{ height: '31px', padding: '0 8px', fontSize: '11px', border: '1px dashed var(--color-danger)' }}
+              style={{ height: '31px', padding: '0 10px', fontSize: '13px', border: '1px dashed var(--color-danger)' }}
               title="Cancel edits"
             >
               ✕
@@ -202,7 +202,7 @@ export default function RecurringExpenses({
                     type="button"
                     className="btn-icon"
                     onClick={() => handleStartEdit(item)}
-                    style={{ width: '18px', height: '18px', fontSize: '11px', display: 'inline-flex', justifyContent: 'center', alignItems: 'center', color: 'var(--color-primary)' }}
+                    style={{ width: '22px', height: '22px', fontSize: '13px', display: 'inline-flex', justifyContent: 'center', alignItems: 'center', color: 'var(--color-primary)' }}
                     title="Edit recurring item"
                   >
                     ✏️
@@ -211,7 +211,7 @@ export default function RecurringExpenses({
                     type="button"
                     className="btn-icon delete"
                     onClick={() => onRemove(item.id)}
-                    style={{ width: '18px', height: '18px', fontSize: '11px', display: 'inline-flex', justifyContent: 'center', alignItems: 'center' }}
+                    style={{ width: '22px', height: '22px', fontSize: '13px', display: 'inline-flex', justifyContent: 'center', alignItems: 'center' }}
                     title="Remove recurring item"
                   >
                     ✕
@@ -222,7 +222,7 @@ export default function RecurringExpenses({
           })}
         </div>
       ) : (
-        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textAlign: 'center', padding: '6px 0' }}>
+        <div style={{ fontSize: '13px', color: 'var(--text-dim)', textAlign: 'center', padding: '6px 0' }}>
           No recurring expenses defined. Project-wide monthly costs will start empty.
         </div>
       )}

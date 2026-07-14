@@ -194,7 +194,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
           <h2 style={{ fontSize: '18px', fontWeight: '600', color: '#fff' }}>Cumulative Balance Forecast Trend</h2>
-          <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
             Shows planned project cash balance vs actual forecasted balance over time.
           </p>
         </div>
@@ -205,7 +205,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
             type="button"
             className={`tab-btn ${range === '12' ? 'active' : ''}`}
             onClick={() => setRange('12')}
-            style={{ fontSize: '11px', padding: '4px 10px' }}
+            style={{ fontSize: '13px', padding: '6px 12px' }}
           >
             1 Year
           </button>
@@ -213,7 +213,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
             type="button"
             className={`tab-btn ${range === '24' ? 'active' : ''}`}
             onClick={() => setRange('24')}
-            style={{ fontSize: '11px', padding: '4px 10px' }}
+            style={{ fontSize: '13px', padding: '6px 12px' }}
           >
             2 Years
           </button>
@@ -221,7 +221,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
             type="button"
             className={`tab-btn ${range === '36' ? 'active' : ''}`}
             onClick={() => setRange('36')}
-            style={{ fontSize: '11px', padding: '4px 10px' }}
+            style={{ fontSize: '13px', padding: '6px 12px' }}
           >
             3 Years
           </button>
@@ -229,7 +229,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
             type="button"
             className={`tab-btn ${range === 'all' ? 'active' : ''}`}
             onClick={() => setRange('all')}
-            style={{ fontSize: '11px', padding: '4px 10px' }}
+            style={{ fontSize: '13px', padding: '6px 12px' }}
           >
             All
           </button>
@@ -325,7 +325,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
                     x={p.x + 6} 
                     y={paddingY - 10} 
                     fill="var(--text-muted)" 
-                    fontSize="11px" 
+                    fontSize="13px" 
                     fontWeight="600"
                   >
                     {p.year}
@@ -428,7 +428,7 @@ export default function CashFlowChart({ timeline, selectedMonthKey, onSelectMont
               Forecast: {formatCurrency(hoveredPoint.rawForecast)}
             </div>
             {hoveredPoint.hasDeficit && (
-              <div style={{ color: 'var(--color-danger)', fontWeight: '700', fontSize: '11px', marginTop: '2px' }}>
+              <div style={{ color: 'var(--color-danger)', fontWeight: '700', fontSize: '13px', marginTop: '2px' }}>
                 ⚠️ CASH DEFICIT
               </div>
             )}

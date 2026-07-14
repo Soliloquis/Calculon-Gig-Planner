@@ -39,7 +39,7 @@ export default function Dashboard({
             <strong>⚠️ Cash Flow Deficits:</strong> There are <strong>{deficitsCount}</strong> months projected to hit a negative balance. Reschedule future expenses or increase base funding.
           </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Jump to:</span>
+            <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Jump to:</span>
             {deficitMonths.slice(0, 6).map(m => (
               <button
                 key={m.month}
@@ -49,8 +49,8 @@ export default function Dashboard({
                   border: '1px solid rgba(244, 63, 94, 0.5)',
                   borderRadius: '4px',
                   color: '#fff',
-                  padding: '2px 6px',
-                  fontSize: '10px',
+                  padding: '3px 8px',
+                  fontSize: '12px',
                   cursor: 'pointer',
                   fontWeight: '600'
                 }}
@@ -59,7 +59,7 @@ export default function Dashboard({
               </button>
             ))}
             {deficitMonths.length > 6 && (
-              <span style={{ fontSize: '10px' }}>+{deficitMonths.length - 6} more</span>
+              <span style={{ fontSize: '12px' }}>+{deficitMonths.length - 6} more</span>
             )}
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function Dashboard({
         <div className="metric-card">
           <div className="metric-label">Flat Monthly Allocation</div>
           <div className="input-wrapper" style={{ margin: '4px 0' }}>
-            <span className="input-prefix" style={{ color: 'var(--text-main)', fontSize: '16px', left: '0' }}>{currencySymbol}</span>
+            <span className="input-prefix" style={{ color: 'var(--text-main)', fontSize: '18px', left: '0' }}>{currencySymbol}</span>
             <input
               type="number"
               className="form-input"
@@ -80,7 +80,7 @@ export default function Dashboard({
               style={{
                 fontSize: '18px',
                 fontWeight: '700',
-                padding: '2px 2px 2px 18px',
+                padding: '2px 2px 2px 20px',
                 background: 'transparent',
                 border: 'none',
                 borderBottom: '1px dashed rgba(255, 255, 255, 0.2)',
