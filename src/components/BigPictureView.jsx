@@ -248,16 +248,16 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
               </div>
 
               {/* Year Category Breakdowns (SVG Donut Chart) */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
                 <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   📊 Year Category breakdown
                 </span>
 
                 {slices.length > 0 ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '6px' }}>
-                    {/* SVG Donut Chart wrapper */}
-                    <div style={{ position: 'relative', width: '100px', height: '100px', flexShrink: 0 }}>
-                      <svg width="100" height="100" viewBox="0 0 100 100">
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginTop: '6px' }}>
+                    {/* SVG Donut Chart wrapper (centered, scaled up) */}
+                    <div style={{ position: 'relative', width: '260px', height: '260px', flexShrink: 0 }}>
+                      <svg width="260" height="260" viewBox="0 0 100 100">
                         <circle 
                           cx="50" 
                           cy="50" 
@@ -282,7 +282,7 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
                           />
                         ))}
                       </svg>
-                      {/* Total Centered Labels Overlay */}
+                      {/* Total Centered Labels Overlay (scaled up) */}
                       <div 
                         style={{
                           position: 'absolute',
@@ -294,18 +294,18 @@ export default function BigPictureView({ timeline, annualSummary, summary, proje
                           alignItems: 'center',
                           justifyContent: 'center',
                           pointerEvents: 'none',
-                          lineHeight: '1.1'
+                          lineHeight: '1.2'
                         }}
                       >
-                        <span style={{ fontSize: '8px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '700' }}>Outflow</span>
-                        <span style={{ fontSize: '11px', fontWeight: '800', color: '#fff' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.5px' }}>Outflow</span>
+                        <span style={{ fontSize: '24px', fontWeight: '800', color: '#fff' }}>
                           {formatVal(year.outflow)}
                         </span>
                       </div>
                     </div>
 
-                    {/* Donut Legend */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1, minWidth: 0 }}>
+                    {/* Donut Legend (spans full width below chart) */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
                       {slices.map(slice => (
                         <div key={slice.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', gap: '4px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
