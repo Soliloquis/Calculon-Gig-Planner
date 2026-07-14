@@ -73,7 +73,8 @@ export const useProjectBudget = () => {
       months: {},
       categories: DEFAULT_CATEGORIES,
       currency: detectDefaultCurrency(),
-      recurringExpenses: []
+      recurringExpenses: [],
+      recurringAnnualExpenses: []
     };
   });
 
@@ -120,7 +121,7 @@ export const useProjectBudget = () => {
     const customExpenses = monthData.expenses || [];
     const customSpecific = customExpenses.filter(e => !e.recurringSourceId);
     
-    const recurringExpenses = (project.recurringExpenses || []).filter(re => {
+    const projectedMonthly = (project.recurringExpenses || []).filter(re => {
       if (!re.endsAt) return true;
       return monthKey <= re.endsAt;
     }).map(re => {
@@ -140,6 +141,28 @@ export const useProjectBudget = () => {
       };
     }).filter(e => !e.isExcluded);
 
+    const projectedAnnual = (project.recurringAnnualExpenses || []).filter(re => {
+      if (re.endsAt && monthKey > re.endsAt) return false;
+      const monthPart = parseInt(monthKey.split('-')[1], 10);
+      return monthPart === Number(re.month);
+    }).map(re => {
+      const override = customExpenses.find(e => e.recurringSourceId === re.id);
+      if (override) {
+        return override;
+      }
+      return {
+        id: `${re.id}_${monthKey}`,
+        recurringSourceId: re.id,
+        day: re.day,
+        category: re.category,
+        description: re.description,
+        plannedAmount: re.plannedAmount,
+        actualAmount: re.plannedAmount,
+        isPaid: false
+      };
+    }).filter(e => !e.isExcluded);
+
+    const recurringExpenses = [...projectedMonthly, ...projectedAnnual];
     const allExpenses = [...customSpecific, ...recurringExpenses];
 
     const plannedExpenses = allExpenses.reduce((sum, e) => sum + (e.plannedAmount || 0), 0);
@@ -309,8 +332,10 @@ export const useProjectBudget = () => {
         });
       } else {
         // It's a recurring template item that has not been overridden in this month yet.
-        // We find the template from project.recurringExpenses
-        const template = (prev.recurringExpenses || []).find(re => expenseId.startsWith(re.id));
+        let template = (prev.recurringExpenses || []).find(re => expenseId.startsWith(re.id));
+        if (!template) {
+          template = (prev.recurringAnnualExpenses || []).find(re => expenseId.startsWith(re.id));
+        }
         if (template) {
           const plannedAmount = updates.plannedAmount !== undefined ? Number(updates.plannedAmount) : template.plannedAmount;
           const actualAmount = updates.actualAmount !== undefined ? Number(updates.actualAmount) : template.plannedAmount;
@@ -357,7 +382,10 @@ export const useProjectBudget = () => {
         }
       } else {
         // If it is a template not yet overridden, create an override marked as isExcluded
-        const template = (prev.recurringExpenses || []).find(re => expenseId.startsWith(re.id));
+        let template = (prev.recurringExpenses || []).find(re => expenseId.startsWith(re.id));
+        if (!template) {
+          template = (prev.recurringAnnualExpenses || []).find(re => expenseId.startsWith(re.id));
+        }
         if (template) {
           mData.expenses = [...mData.expenses, {
             id: expenseId,
@@ -392,7 +420,10 @@ export const useProjectBudget = () => {
       // Resolve expense in source
       let expenseToMove = sourceMonth.expenses.find(e => e.id === expenseId);
       if (!expenseToMove) {
-        const template = (prev.recurringExpenses || []).find(re => expenseId.startsWith(re.id));
+        let template = (prev.recurringExpenses || []).find(re => expenseId.startsWith(re.id));
+        if (!template) {
+          template = (prev.recurringAnnualExpenses || []).find(re => expenseId.startsWith(re.id));
+        }
         if (template) {
           expenseToMove = {
             id: expenseId,
@@ -503,7 +534,8 @@ export const useProjectBudget = () => {
       months: {},
       categories: DEFAULT_CATEGORIES,
       currency: detectDefaultCurrency(),
-      recurringExpenses: []
+      recurringExpenses: [],
+      recurringAnnualExpenses: []
     });
   };
 
@@ -514,7 +546,8 @@ export const useProjectBudget = () => {
         categories: newData.categories || DEFAULT_CATEGORIES,
         months: newData.months || {},
         currency: newData.currency || 'USD',
-        recurringExpenses: newData.recurringExpenses || []
+        recurringExpenses: newData.recurringExpenses || [],
+        recurringAnnualExpenses: newData.recurringAnnualExpenses || []
       });
     }
   };
@@ -641,6 +674,10 @@ export const useProjectBudget = () => {
       recurringExpenses: [
         { id: 'rec_seed_1', day: 10, category: 'software', description: 'GitHub Copilot', plannedAmount: 10 },
         { id: 'rec_seed_2', day: 15, category: 'services', description: 'VPS Hosting Cloud', plannedAmount: 35 }
+      ],
+      recurringAnnualExpenses: [
+        { id: 'rec_ann_seed_1', month: 4, day: 15, category: 'software', description: 'Tax Preparation Software', plannedAmount: 120 },
+        { id: 'rec_ann_seed_2', month: 10, day: 24, category: 'services', description: 'Domain Registry Renewal', plannedAmount: 15 }
       ]
     });
   };
@@ -685,6 +722,52 @@ export const useProjectBudget = () => {
         return item;
       });
       return { ...prev, recurringExpenses: nextRecurring };
+    });
+  };
+
+  const addRecurringAnnualExpense = (expenseData) => {
+    setProject(prev => {
+      const nextRecurring = [
+        ...(prev.recurringAnnualExpenses || []),
+        {
+          id: 'rec_ann_' + Math.random().toString(36).substr(2, 9),
+          month: Number(expenseData.month) || 1,
+          day: Number(expenseData.day) || 1,
+          category: expenseData.category || 'other',
+          description: expenseData.description || 'New annual recurring expense',
+          plannedAmount: Number(expenseData.plannedAmount) || 0,
+          endsAt: expenseData.endsAt || ''
+        }
+      ];
+      return { ...prev, recurringAnnualExpenses: nextRecurring };
+    });
+  };
+
+  const removeRecurringAnnualExpense = (id) => {
+    setProject(prev => {
+      const nextRecurring = (prev.recurringAnnualExpenses || []).filter(item => item.id !== id);
+      return { ...prev, recurringAnnualExpenses: nextRecurring };
+    });
+  };
+
+  const updateRecurringAnnualExpense = (id, updates) => {
+    setProject(prev => {
+      const nextRecurring = (prev.recurringAnnualExpenses || []).map(item => {
+        if (item.id === id) {
+          const plannedAmount = updates.plannedAmount !== undefined ? Number(updates.plannedAmount) : item.plannedAmount;
+          const month = updates.month !== undefined ? Number(updates.month) : item.month;
+          const day = updates.day !== undefined ? Number(updates.day) : item.day;
+          return {
+            ...item,
+            ...updates,
+            plannedAmount,
+            month,
+            day
+          };
+        }
+        return item;
+      });
+      return { ...prev, recurringAnnualExpenses: nextRecurring };
     });
   };
 
@@ -733,6 +816,9 @@ export const useProjectBudget = () => {
     addRecurringExpense,
     removeRecurringExpense,
     updateRecurringExpense,
+    addRecurringAnnualExpense,
+    removeRecurringAnnualExpense,
+    updateRecurringAnnualExpense,
     addCategory,
     removeCategory,
     dragAndDrop

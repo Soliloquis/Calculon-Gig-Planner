@@ -8,6 +8,7 @@ import CategoriesEditor from './components/CategoriesEditor';
 import ImportExport from './components/ImportExport';
 import BigPictureModal from './components/BigPictureModal';
 import RecurringExpenses from './components/RecurringExpenses';
+import RecurringAnnualExpenses from './components/RecurringAnnualExpenses';
 import { LOGO_BASE64 } from './assets/logoBase64';
 
 export default function App() {
@@ -31,6 +32,9 @@ export default function App() {
     addRecurringExpense,
     removeRecurringExpense,
     updateRecurringExpense,
+    addRecurringAnnualExpense,
+    removeRecurringAnnualExpense,
+    updateRecurringAnnualExpense,
     addCategory,
     removeCategory,
     dragAndDrop
@@ -127,6 +131,16 @@ export default function App() {
               onAdd={addRecurringExpense}
               onRemove={removeRecurringExpense}
               onUpdate={updateRecurringExpense}
+            />
+
+            {/* Recurring Annual Expenses Manager */}
+            <RecurringAnnualExpenses
+              recurringAnnualExpenses={project.recurringAnnualExpenses}
+              categories={project.categories}
+              currencySymbol={summary.currencySymbol}
+              onAdd={addRecurringAnnualExpense}
+              onRemove={removeRecurringAnnualExpense}
+              onUpdate={updateRecurringAnnualExpense}
             />
 
             {/* Horizontal Timeline Calendar Grid */}
